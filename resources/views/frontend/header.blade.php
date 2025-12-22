@@ -5,7 +5,7 @@
         <div class="col-lg-4">
           <div class="d-flex items-center">
             <a class="position-relative logo me-4 mt-1" href="{{ url('/') }}">
-              <img alt="iUniversity-logo" src="{{ asset('') }}frontend/images/i-university-logo-01.png">
+              <img alt="iUniversity-logo" src="{{ asset('') }}frontend/images/I-University_logo_11.png">
             </a>
             <div class="search-box position-relative d-flex w-100 items-center">
               <input type="search" value="{{ request('query') }}" class="search-input border border-rounded-10 ps-3 pe-4 py-2 d-flex w-100 bg-white" placeholder="Explore Courses">

@@ -3,7 +3,7 @@
      <div class="d-flex justify-content-between footerLogo">
 
        <div class="leftLog">
-         <img src="{{ asset('') }}frontend/images/i-university-logo-white-01.png">
+         <img src="{{ asset('') }}frontend/images/I-University_logo_white.png">
          <p>{{ $homepage->building_careers ?? 'Building Careers of Tomorrow' }}</p>
          <div class="socialIcon">
            <ul>
