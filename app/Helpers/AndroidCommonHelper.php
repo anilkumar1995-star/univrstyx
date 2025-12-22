@@ -57,6 +57,7 @@ class AndroidCommonHelper
         $txnId = AndroidCommonHelper::makeTxnId("SMS", 4);
 
         $company = DB::table('companies')->where('website', $_SERVER['HTTP_HOST'])->first();
+        // dd($company);
         $sentOtp = false;
 
 
