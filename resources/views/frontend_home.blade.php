@@ -933,7 +933,7 @@
             </div>
 
             <div class="modal-body bg-light text-center p-5">
-                <img src="{{ asset('') }}frontend/images/i-university-logo-01.png" alt="University Update" class="img-fluid rounded-3 mb-4 shadow-sm" style="max-height: 100px; object-fit: cover;">
+                <img src="{{ asset('') }}frontend/images/I-University_logo_11.png" alt="University Update" class="img-fluid rounded-3 mb-4 shadow-sm" style="max-height: 100px; object-fit: cover;">
 
                 <h4 class="fw-semibold text-primary mb-2">📢 Admissions for 2025 Are Now Open!</h4>
                 <p class="text-muted mb-4">
