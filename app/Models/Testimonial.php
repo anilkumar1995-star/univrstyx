@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+
+class Testimonial extends Model
+{
+    protected $table = 'learners_testimonials';
+
+    protected $fillable =[
+        'user_id', 'name', 'designation', 'status', 'message', 'video_image', 'video_url'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return date('d M y - h:i A', strtotime($value));
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date('d M y - h:i A', strtotime($value));
+    }
+}
+
+       
