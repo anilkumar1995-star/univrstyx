@@ -147,7 +147,6 @@ class Permission
 
             ];
             $result = \Myhelper::curl($fullUrl, "POST", json_encode($param), $header, "yes", "IPay-SMS", $mobile);
-          dd($result);
             $resp = json_decode($result['response']);
 
             if ($result['code'] == 200) {
