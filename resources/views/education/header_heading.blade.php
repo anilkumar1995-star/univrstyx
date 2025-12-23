@@ -110,6 +110,10 @@
                         <div class="modal-body">
                             <div class="row g-3"> 
                                 <div class="col-md-6">
+                                    <label class="form-label">Header Image</label>
+                                    <input type="file" name="header_image" id="header_image" placeholder="Enter Header Heading 1" class="form-control">
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label">Header Heading 1</label>
                                     <input type="text" name="header_1" id="header" placeholder="Enter Header Heading 1" class="form-control">
                                 </div>
@@ -120,6 +124,10 @@
                                  <div class="col-md-6">
                                     <label class="form-label">Header Heading 3</label>
                                     <input type="text" name="header_3" id="header_3" placeholder="Enter Heading 3" class="form-control">
+                                </div>
+                                 <div class="col-md-6">
+                                    <label class="form-label">Footer Image</label>
+                                    <input type="file" name="footer_image" id="footer_image" placeholder="Enter Footer Image" class="form-control">
                                 </div>
                                 
                                  <div class="col-md-6">
@@ -170,7 +178,7 @@
                         form.find('button:submit').html('Submit Details').attr(
                             'disabled', false).removeClass('btn-secondary');
                         if (data.status === "success") {
-                            form[0].reset();
+                            location.reload();
                          $('#datatable').DataTable().ajax.reload(null, false);
                             notify(data.message, 'success');
                             $('#addHeaderModal').modal('hide');

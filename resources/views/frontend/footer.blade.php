@@ -3,7 +3,15 @@
      <div class="d-flex justify-content-between footerLogo">
 
        <div class="leftLog">
-         <img src="{{ asset('') }}frontend/images/I-University_logo_white.png">
+         @if(!empty($headerdata->footer_image))
+              <img 
+                  alt="iUniversity-logo"
+                  src="https://images.incomeowl.in/incomeowl/crm/images/{{ $headerdata->footer_image }}" height="40px" width="140px">
+          @else
+              <img 
+                  alt="iUniversity-logo"
+                  src="{{ asset('frontend/images/I-University_logo_white.png') }}">
+          @endif
          <p>{{ $homepage->building_careers ?? 'Building Careers of Tomorrow' }}</p>
          <div class="socialIcon">
            <ul>

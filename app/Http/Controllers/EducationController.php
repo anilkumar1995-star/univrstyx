@@ -523,62 +523,97 @@ class EducationController extends Controller
     }
 
 
+public function HeaderAdd(Request $post)
+{
+    $post->validate([
+        'user_id'  => 'required',
+        'header_1' => 'required',
+        'header_2' => 'required',
+        'header_3' => 'required',
+    ]);
 
-    public function HeaderAdd(Request $post)
-    {
-        $post->validate([
-            'user_id'  => 'required',
-            'header_1' => 'required',
-            'header_2' => 'required',
-            'header_3' => 'required',
-        ]);
+    $existing = DB::table('header_content')->first();
 
-        if ($post->id) {
-            $updateData = [
-                'user_id'   => $post->user_id,
-                'header_1'  => $post->header_1,
-                'header_2'  => $post->header_2,
-                'header_3'  => $post->header_3,
-                'status'    => $post->status ?? 'active',
-            ];
+    $headerimg = $existing->header_image ?? null;
+    $footerimg = $existing->footer_image ?? null;
 
-            $updated = DB::table('header_content')
-                ->where('id', $post->id)
-                ->update($updateData);
+    // ================= HEADER IMAGE =================
+    if ($post->hasFile('header_image')) {
+        $file = $post->file('header_image');
+        $imgupload = ImageHelper::imageUploadHelper('header_image', $file);
 
-            if ($updated) {
-                return response()->json([
-                    'status'  => 'success',
-                    'message' => 'Header updated successfully'
-                ], 200);
-            } else {
-                return response()->json([
-                    'status'  => 'failed',
-                    'message' => 'No changes detected or update failed'
-                ], 400);
-            }
-        } else {
-            $inserted = DB::table('header_content')->insert([
-                'user_id'   => $post->user_id,
-                'header_1'  => $post->header_1,
-                'header_2'  => $post->header_2,
-                'header_3'  => $post->header_3,
-                'status'    => $post->status ?? 'active',
+        if (!$imgupload['status']) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $imgupload['message']
+            ], 400);
+        }
+
+        $headerimg = $imgupload['data']['target_file'];
+    }
+
+    // ================= FOOTER IMAGE =================
+    if ($post->hasFile('footer_image')) {
+        $file = $post->file('footer_image');
+        $imgupload = ImageHelper::imageUploadHelper('footer_image', $file);
+
+        if (!$imgupload['status']) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $imgupload['message']
+            ], 400);
+        }
+
+        $footerimg = $imgupload['data']['target_file'];
+    }
+
+    // ================= UPDATE =================
+    if ($post->id) {
+
+        DB::table('header_content')
+            ->where('id', $post->id)
+            ->update([
+                'user_id'       => $post->user_id,
+                'header_1'      => $post->header_1,
+                'header_2'      => $post->header_2,
+                'header_3'      => $post->header_3,
+                'header_image'  => $headerimg,
+                'footer_image'  => $footerimg,
+                'status'        => $post->status ?? 'active',
             ]);
 
-            if ($inserted) {
-                return response()->json([
-                    'status'  => 'success',
-                    'message' => 'Header added successfully'
-                ], 200);
-            } else {
-                return response()->json([
-                    'status'  => 'failed',
-                    'message' => 'Header not added'
-                ], 400);
-            }
-        }
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Header updated successfully'
+        ], 200);
     }
+
+    // ================= INSERT =================
+    if ($existing) {
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Header data already exists. Please edit.'
+        ], 400);
+    }
+
+    DB::table('header_content')->insert([
+        'user_id'       => $post->user_id,
+        'header_1'      => $post->header_1,
+        'header_2'      => $post->header_2,
+        'header_3'      => $post->header_3,
+        'header_image'  => $headerimg,
+        'footer_image'  => $footerimg,
+        'status'        => $post->status ?? 'active',
+    ]);
+
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Header added successfully'
+    ], 200);
+}
+
+
+
 
     public function SliderAdd(Request $post)
     {

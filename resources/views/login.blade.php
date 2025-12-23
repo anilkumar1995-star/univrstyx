@@ -82,7 +82,7 @@
                 <div class="w-px-400 mx-auto sign-in-from">
                  
                     <div class="mb-5 w-50">
-                        <img src="{{ asset('frontend/images/i-university-logo-01.png') }}" class="img-fluid w-75" alt="Logo">
+                        <img src="{{ asset('frontend/images/I-University_logo_11.png') }}" class="img-fluid w-75" alt="Logo">
                     </div>
                     <div class="mb-5">
                         <h4 class="my-2 fs-20">Sign In</h4>
