@@ -489,7 +489,7 @@
 
     <script>
         $(document).ready(function() {
-
+        @if(!empty($announcements))
             setTimeout(function () {
             const modalEl = document.getElementById('updateModal');
             if (modalEl) {
@@ -497,7 +497,7 @@
                 myModal.show();
              }
           }, 3000);
-
+         @endif
 
             var currentStep = 1;
             var userMobile = '';
