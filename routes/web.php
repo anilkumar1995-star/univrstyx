@@ -62,6 +62,8 @@ Route::post('/Disclaimer/add', [EducationController::class, 'DisclaimerAdd'])->n
 Route::get('/slider/list', [EducationController::class, 'Slider'])->name('slider');
 Route::get('/header/list', [EducationController::class, 'Header'])->name('header');
 Route::post('/header/add', [EducationController::class, 'HeaderAdd'])->name('addHeader');
+Route::get('/announcements/list', [EducationController::class, 'Notification'])->name('Notification');
+Route::post('/announcements/add', [EducationController::class, 'NotificationAdd'])->name('addNotification');
 Route::post('/testimonials/add', [EducationController::class, 'TestimonialAdd'])->name('addTestimonial');
 Route::post('/instructor/add', [EducationController::class, 'InstructorAdd'])->name('addInstructor');
 Route::post('/learnerSupport/add', [EducationController::class, 'LearnerSupportAdd'])->name('addLearnerSupport');

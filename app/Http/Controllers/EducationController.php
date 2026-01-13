@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ImageHelper;
 use App\Helpers\Permission;
+use App\Models\Announcements;
 use App\Models\Degree;
 use App\Models\DegreeCategory;
 use App\Models\Disclaimer;
@@ -373,87 +374,87 @@ class EducationController extends Controller
         }
     }
 
-   public function LearnerSupportAdd(Request $post)
-{
-    $post->validate([
-        'learner_support_heading' => 'required|string|max:255',
-        'learner_support_content' => 'required|string|max:255',
-        'get_started' => 'nullable|string|max:255',
-        'status' => 'required|in:active,inactive',
-    ]);
-
-    DB::beginTransaction();
-
-    try {
-
-        $oldRecord = null;
-        if ($post->id) {
-            $oldRecord = DB::table('learner_support')->where('id', $post->id)->first();
-        }
-
-        $images = [];
-
-        if ($post->hasFile('image')) {
-            foreach ($post->file('image') as $file) {
-
-                $upload = ImageHelper::imageUploadHelper("learner_support", $file);
-
-                if ($upload['status']) {
-                    $images[] = $upload['data']['target_file'];
-                }
-            }
-        }
-     
-        else if ($oldRecord && $oldRecord->image) {
-            $images = json_decode($oldRecord->image, true);
-        }
-
-        $imageJson = !empty($images) ? json_encode($images) : null;
-
-        $exists = DB::table('learner_support')->first();
-        if ($exists && !$post->id) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Learner Support record already exists. Please edit instead.',
-            ], 400);
-        }
-
-        $data = [
-            'user_id' => $post->user_id,
-            'learner_support_heading' => $post->learner_support_heading,
-            'learner_support_content' => $post->learner_support_content,
-            'get_started' => $post->get_started,
-            'status' => $post->status ?? 'active',
-            'number' => $post->number ? json_encode($post->number) : null,
-            'title' => $post->title ? json_encode($post->title) : null,
-            'description' => $post->description ? json_encode($post->description) : null,
-            'image' => $imageJson,
-        ];
-
-        if ($post->id) {
-            DB::table('learner_support')->where('id', $post->id)->update($data);
-            $msg = "Learner Support updated successfully";
-        } else {
-            DB::table('learner_support')->insert($data);
-            $msg = "Learner Support added successfully";
-        }
-
-        DB::commit();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => $msg
+    public function LearnerSupportAdd(Request $post)
+    {
+        $post->validate([
+            'learner_support_heading' => 'required|string|max:255',
+            'learner_support_content' => 'required|string|max:255',
+            'get_started' => 'nullable|string|max:255',
+            'status' => 'required|in:active,inactive',
         ]);
 
-    } catch (\Exception $e) {
-        DB::rollBack();
+        DB::beginTransaction();
 
-        return response()->json([
-            'status' => 'failed',
-            'message' => 'Error: ' . $e->getMessage(),
-        ], 500);
+        try {
+
+            $oldRecord = null;
+            if ($post->id) {
+                $oldRecord = DB::table('learner_support')->where('id', $post->id)->first();
+            }
+
+            $images = [];
+
+            if ($post->hasFile('image')) {
+                foreach ($post->file('image') as $file) {
+
+                    $upload = ImageHelper::imageUploadHelper("learner_support", $file);
+
+                    if ($upload['status']) {
+                        $images[] = $upload['data']['target_file'];
+                    }
+                }
+            }
+        
+            else if ($oldRecord && $oldRecord->image) {
+                $images = json_decode($oldRecord->image, true);
+            }
+
+            $imageJson = !empty($images) ? json_encode($images) : null;
+
+            $exists = DB::table('learner_support')->first();
+            if ($exists && !$post->id) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Learner Support record already exists. Please edit instead.',
+                ], 400);
+            }
+
+            $data = [
+                'user_id' => $post->user_id,
+                'learner_support_heading' => $post->learner_support_heading,
+                'learner_support_content' => $post->learner_support_content,
+                'get_started' => $post->get_started,
+                'status' => $post->status ?? 'active',
+                'number' => $post->number ? json_encode($post->number) : null,
+                'title' => $post->title ? json_encode($post->title) : null,
+                'description' => $post->description ? json_encode($post->description) : null,
+                'image' => $imageJson,
+            ];
+
+            if ($post->id) {
+                DB::table('learner_support')->where('id', $post->id)->update($data);
+                $msg = "Learner Support updated successfully";
+            } else {
+                DB::table('learner_support')->insert($data);
+                $msg = "Learner Support added successfully";
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $msg
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
     }
-}
 
 
 
@@ -524,95 +525,172 @@ class EducationController extends Controller
         }
     }
 
-
-public function HeaderAdd(Request $post)
-{
-    $post->validate([
-        'user_id'  => 'required',
-        'header_1' => 'required',
-        'header_2' => 'required',
-        'header_3' => 'required',
-    ]);
-
-    $existing = DB::table('header_content')->first();
-
-    $headerimg = $existing->header_image ?? null;
-    $footerimg = $existing->footer_image ?? null;
-
-    // ================= HEADER IMAGE =================
-    if ($post->hasFile('header_image')) {
-        $file = $post->file('header_image');
-        $imgupload = ImageHelper::imageUploadHelper('header_image', $file);
-
-        if (!$imgupload['status']) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $imgupload['message']
-            ], 400);
-        }
-
-        $headerimg = $imgupload['data']['target_file'];
-    }
-
-    // ================= FOOTER IMAGE =================
-    if ($post->hasFile('footer_image')) {
-        $file = $post->file('footer_image');
-        $imgupload = ImageHelper::imageUploadHelper('footer_image', $file);
-
-        if (!$imgupload['status']) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $imgupload['message']
-            ], 400);
-        }
-
-        $footerimg = $imgupload['data']['target_file'];
-    }
-
-    // ================= UPDATE =================
-    if ($post->id) {
-
-        DB::table('header_content')
-            ->where('id', $post->id)
-            ->update([
-                'user_id'       => $post->user_id,
-                'header_1'      => $post->header_1,
-                'header_2'      => $post->header_2,
-                'header_3'      => $post->header_3,
-                'header_image'  => $headerimg,
-                'footer_image'  => $footerimg,
-                'status'        => $post->status ?? 'active',
+        public function NotificationAdd(Request $post)
+    {
+        // dd($post->all());
+        $post->validate([
+                'user_id'          => 'required',
+                'header_1'         => 'required',
+                'heading_2'        => 'required',
+                'btn_text'         => 'required',
+                'description'      => 'required',
+                'footer_content'   => 'required',
+                'status'           => 'required',
+                'notice_image'     => $post->id ? 'nullable|file|mimes:jpg,jpeg,png|max:1024' : 'required|file|mimes:jpg,jpeg,png|max:1024',
             ]);
+
+            $originalFile = null;
+            $message = '';
+
+            if ($post->hasFile('notice_image')) {
+                $file = $post->file('notice_image');
+                $ImageUpload = ImageHelper::imageUploadHelper('notice_image', $file);
+
+                if ($ImageUpload['status']) {
+                    $originalFile = $ImageUpload['data']['target_file'];
+                } else {
+                    $message = $ImageUpload['message'];
+                }
+            }
+
+            if ($post->id) {
+                $existing = DB::table('announcements')->where('id', $post->id)->first();
+
+                $updateData = [
+                    'user_id'          => $post->user_id,
+                    'header_1'         => $post->header_1,
+                    'heading_2'        => $post->heading_2,
+                    'btn_text'         => $post->btn_text,
+                    'description'      => $post->description,
+                    'footer_content'   => $post->footer_content,
+                    'status'           => $post->status,
+                
+                ];
+
+                if ($originalFile) {
+                    $updateData['notice_image'] = $originalFile;
+                } else {
+
+                    $updateData['notice_image'] = $existing->notice_image;
+                }
+
+                $data = DB::table('announcements')
+                    ->where('id', $post->id)
+                    ->update($updateData);
+
+                if ($data) {
+                    return response()->json(['status' => 'success', 'message' => 'Announcements updated successfully'], 200);
+                } else {
+                    return response()->json(['status' => 'failed', 'message' => 'Announcements not updated'], 400);
+                }
+            } else {
+                $data = DB::table('announcements')->insert([
+                    'user_id'          => $post->user_id,
+                    'header_1'         => $post->header_1,
+                    'heading_2'        => $post->heading_2,
+                    'btn_text'         => $post->btn_text,
+                    'description'      => $post->description,
+                    'footer_content'   => $post->footer_content,
+                    'status'           => $post->status,
+                    'notice_image'      => $originalFile,
+                ]);
+
+                if ($data) {
+                    return response()->json(['status' => 'success', 'message' => 'Announcements added successfully'], 200);
+                } else {
+                    return response()->json(['status' => 'failed', 'message' => 'Announcements not added'], 400);
+                }
+            }
+    }
+
+    public function HeaderAdd(Request $post)
+    {
+        $post->validate([
+            'user_id'  => 'required',
+            'header_1' => 'required',
+            'header_2' => 'required',
+            'header_3' => 'required',
+        ]);
+
+        $existing = DB::table('header_content')->first();
+
+        $headerimg = $existing->header_image ?? null;
+        $footerimg = $existing->footer_image ?? null;
+
+        // ================= HEADER IMAGE =================
+        if ($post->hasFile('header_image')) {
+            $file = $post->file('header_image');
+            $imgupload = ImageHelper::imageUploadHelper('header_image', $file);
+
+            if (!$imgupload['status']) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => $imgupload['message']
+                ], 400);
+            }
+
+            $headerimg = $imgupload['data']['target_file'];
+        }
+
+        // ================= FOOTER IMAGE =================
+        if ($post->hasFile('footer_image')) {
+            $file = $post->file('footer_image');
+            $imgupload = ImageHelper::imageUploadHelper('footer_image', $file);
+
+            if (!$imgupload['status']) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => $imgupload['message']
+                ], 400);
+            }
+
+            $footerimg = $imgupload['data']['target_file'];
+        }
+
+        // ================= UPDATE =================
+        if ($post->id) {
+
+            DB::table('header_content')
+                ->where('id', $post->id)
+                ->update([
+                    'user_id'       => $post->user_id,
+                    'header_1'      => $post->header_1,
+                    'header_2'      => $post->header_2,
+                    'header_3'      => $post->header_3,
+                    'header_image'  => $headerimg,
+                    'footer_image'  => $footerimg,
+                    'status'        => $post->status ?? 'active',
+                ]);
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Header updated successfully'
+            ], 200);
+        }
+
+        // ================= INSERT =================
+        if ($existing) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Header data already exists. Please edit.'
+            ], 400);
+        }
+
+        DB::table('header_content')->insert([
+            'user_id'       => $post->user_id,
+            'header_1'      => $post->header_1,
+            'header_2'      => $post->header_2,
+            'header_3'      => $post->header_3,
+            'header_image'  => $headerimg,
+            'footer_image'  => $footerimg,
+            'status'        => $post->status ?? 'active',
+        ]);
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Header updated successfully'
+            'message' => 'Header added successfully'
         ], 200);
     }
-
-    // ================= INSERT =================
-    if ($existing) {
-        return response()->json([
-            'status'  => 'error',
-            'message' => 'Header data already exists. Please edit.'
-        ], 400);
-    }
-
-    DB::table('header_content')->insert([
-        'user_id'       => $post->user_id,
-        'header_1'      => $post->header_1,
-        'header_2'      => $post->header_2,
-        'header_3'      => $post->header_3,
-        'header_image'  => $headerimg,
-        'footer_image'  => $footerimg,
-        'status'        => $post->status ?? 'active',
-    ]);
-
-    return response()->json([
-        'status'  => 'success',
-        'message' => 'Header added successfully'
-    ], 200);
-}
 
 
 
@@ -721,14 +799,12 @@ public function HeaderAdd(Request $post)
         $existsheader = Header::count() > 0;
         return view('education.header_heading', compact('existsheader'));
     }
-    public function payBill(Request $post)
+     public function Notification()
     {
-        // dd($post->all());
-        return response()->json([
-            "status" => "error",
-            "message" => "Something went wrong"
-        ], 200);
+        $existsnotice = Announcements::count() > 0;
+        return view('education.notification', compact('existsnotice'));
     }
+   
     public function AwardAdd(Request $post)
     {
         $post->validate([

@@ -786,9 +786,9 @@
             <!-- Heading -->
             <div class="row mb-4">
                 <div class="col-lg-12 text-center">
-                 @php
+                    @php
                     $heading = $homepage->media_heading ?? 'Our Presence in the Media';
-                @endphp
+                    @endphp
                     <div class="heading-Theme">
                         @php
                         // Split heading for color styling
@@ -893,10 +893,6 @@
         </div>
     </section>
 
-
-
-
-
     <section class="disclaimer">
         <div class="container">
             <div class="row">
@@ -915,30 +911,33 @@
             </div>
         </div>
     </section>
-
-
 </div>
 
 
-<!--Updates Modal -->
+<!--Announcements Modal -->
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="universityUpdateLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
             <div class="modal-header text-white" style="background: linear-gradient(135deg, #003366, #0055a4);">
                 <h5 class="modal-title fw-bold" id="universityUpdateLabel">
-                    🎓 iUniversity Announcement
+                    🎓 {{ $announcements->header_1 ?? 'iUniversity Announcement' }}
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body bg-light text-center p-5">
+                @if(!empty($announcements->notice_image))
+                <img
+                    alt="iUniversity-logo"
+                    src="https://images.incomeowl.in/incomeowl/crm/images/{{ $announcements->notice_image }}" class="img-fluid rounded-3 mb-4 shadow-sm" style="max-height: 100px;width:354px; object-fit: cover;">
+                @else
                 <img src="{{ asset('') }}frontend/images/I-University_logo_11.png" alt="University Update" class="img-fluid rounded-3 mb-4 shadow-sm" style="max-height: 100px; object-fit: cover;">
-
-                <h4 class="fw-semibold text-primary mb-2">📢 Admissions for 2026 Are Now Open!</h4>
+                @endif
+                <h4 class="fw-semibold text-primary mb-2">📢 {{ $announcements->heading_2 ?? 'Admissions for 2026 Are Now Open!' }}</h4>
                 <p class="text-muted mb-4">
-                    Explore our new degree programs in Computer Science, AI, and Digital Marketing.
-                    Apply now to be part of our vibrant campus community.
+                    {{ $announcements->description ?? 'Explore our new degree programs in Computer Science, AI, and Digital Marketing.
+                    Apply now to be part of our vibrant campus community.' }}
                 </p>
                 @php
                 $allowedIds = [1, 4, 6, 7, 19, 21, 22,25];
@@ -946,13 +945,13 @@
                 @endphp
 
                 <a href="{{ url('programmes/'.$randomId) }}" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm">
-                    Apply Now
+                    {{ $announcements->btn_text ?? 'Apply Now' }}
                 </a>
             </div>
 
             <div class="modal-footer bg-white justify-content-center">
                 <small class="text-secondary">
-                    Stay tuned for more updates — Scholarships & Events coming soon 🎉
+                    {{ $announcements->footer_content ?? 'Stay tuned for more updates — Scholarships & Events coming soon 🎉' }}
                 </small>
             </div>
         </div>

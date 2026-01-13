@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AndroidCommonHelper;
 use App\Helpers\ResponseHelper;
 use App\Helpers\WhatsAppSend;
+use App\Models\Announcements;
 use Illuminate\Http\Request;
 use App\User;
 use App\Models\Pindata;
@@ -69,6 +70,7 @@ class Userendontroller extends Controller
         $data['mediaItems'] = DB::table('footer_media')->where('status', 'active')->orderByDesc('id')->get();
         $data['mediaHeading'] = DB::table('footer_media')->where('status', 'active')->first();
         $data['homepage'] = DB::table('homepage_settings')->where('status', 'active')->first();
+        $data['announcements'] = Announcements::where('status', 'active')->first();
 
 
         // dd($data['coursesByCategory']);

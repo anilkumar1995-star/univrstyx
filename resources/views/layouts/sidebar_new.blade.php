@@ -125,7 +125,7 @@
                              <a href="javascript:void(0);"
                                  class="{{ Request::is('header/list') || Request::is('slider/list') || Request::is('goal/list') || Request::is('employment/list') || 
                              Request::is('award/list') || Request::is('testimonials/list') || Request::is('instructors/list') || Request::is('learnersupport/list') || 
-                             Request::is('disclaimer/list') || Request::is('application/list') || Request::is('application/grievance') || Request::is('primary/color') || Request::is('homepage/settings') || Request::is('community/list') ? 'active subdrop' : '' }}">
+                             Request::is('disclaimer/list') || Request::is('application/list') || Request::is('notification/list') || Request::is('application/grievance') || Request::is('primary/color') || Request::is('homepage/settings') || Request::is('community/list') ? 'active subdrop' : '' }}">
                                  <i class="ti ti-settings-cog"></i><span>Management Data</span><span
                                      class="menu-arrow"></span>
                              </a>
@@ -134,6 +134,9 @@
                                  href="{{ route('holidayView') }}">Holiday
                                  List</a>
                          </li> --}}
+                          <li><a class="{{ Request::is('notification/list') ? 'active' : ''}}"
+                                 href="{{route('Notification')}}">Announcements
+                             </a></li>
                          <li><a class="{{ Request::is('header/list') ? 'active' : ''}}"
                                  href="{{route('header')}}">Header Heading
                              </a></li>

@@ -15,6 +15,7 @@ use App\Models\Microatmreport;
 use App\Models\User;
 use App\Models\Provider;
 use App\Models\Agents;
+use App\Models\Announcements;
 use App\Models\PortalSetting;
 use App\Models\Api;
 use App\Models\BeneRegistration;
@@ -225,6 +226,21 @@ class CommonController extends Controller
 			case 'degree':
 				$request['table'] = '\App\Models\University';
 				$request['searchdata'] = ['id', 'degree_name', 'description'];
+				$request['select'] = 'all';
+				$request['order'] = ['id', 'desc'];
+				if (\Myhelper::hasRole('admin')) {
+					$request['parentData'] = 'all';
+					$request['whereIn'] = 'user_id';
+				} else {
+					$request['parentData'] = [\Auth::id()];
+					$request['whereIn'] = 'user_id';
+				}
+
+				break;
+
+			case 'announcements':
+				$request['table'] = '\App\Models\Announcements';
+				$request['searchdata'] = ['id', 'header_1', 'btn_text'];
 				$request['select'] = 'all';
 				$request['order'] = ['id', 'desc'];
 				if (\Myhelper::hasRole('admin')) {
