@@ -25,7 +25,7 @@ $table = 'yes';
                     {{ csrf_field() }}
 
                     <input type="hidden" name="type" value="getbilldetails">
-                    <input type="hidden" name="operatorType" value="electricity">
+                    <input type="hidden" name="operatorType" value="educationfees">
                     <input type="hidden" name="refId">
                     <input type="hidden" name="billId">
                     <input type="hidden" name="mode" value="online">
@@ -115,7 +115,7 @@ $table = 'yes';
                 data: function(params) {
                     var query = {
                         searchname: params.term,
-                        type: `electricity`,
+                        type: `educationfees`,
                         page: params.page || 1,
                         _token: `{{csrf_token()}}`
 
