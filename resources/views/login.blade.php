@@ -135,11 +135,11 @@
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary w-100">Sign In</button>
                         </div>
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <h6>New on our platform?<a href="#" data-bs-toggle="modal"
                                     data-bs-target="#registerModal" class="text-purple link-hover"> Create
                                     an account</a></h6>
-                        </div> 
+                        </div>  -->
             
                     </form>
 
