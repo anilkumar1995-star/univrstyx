@@ -52,7 +52,9 @@ class EducationController extends Controller
     }
     public function EducationFee()
     {
-        return view('fee.education_fee');
+        $data['providers'] = Db::table('billpay_providers')->where('type', 'educationfees')->where('status', '1')->whereNotNull('customParamResp')->orderBy('name')->get();
+
+        return view('fee.education_fee')->with($data);
     }
     public function SchoolFee()
     {

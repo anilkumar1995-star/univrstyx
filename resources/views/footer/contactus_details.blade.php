@@ -105,9 +105,11 @@
                             </div>
 
 
-                            <h4 class="fw-bold mt-3 mb-1">{{ ucfirst($office['city']) }}</h4>
-
-                            <p class="mb-0 mt-3 text-white" style="font-size:13px; line-height: 1.4;">
+                            <h3 class="fw-bold mt-3 mb-1">{{ ucfirst($office['city']) }}</h3>
+                             <p class="mb-0 text-white" style="font-size:15px;">
+                                iPaymnt Tech Private Limited
+                            </p>
+                             <p class="text-white mb-0" style="font-size:13px; line-height: 1.4;">
                                 {{ $office['address'] }}
                             </p>
 

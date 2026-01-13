@@ -25,6 +25,7 @@ use App\Http\Controllers\FooterController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StatementController;
+use App\Http\Controllers\BillpayController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Userendontroller;
 use App\Models\Application;
@@ -172,9 +173,17 @@ Route::group(['prefix' => 'education', 'middleware' => ['auth', 'company']], fun
     Route::get('/school/fee', [EducationController::class, 'SchoolFee'])->name('school.fee');
     Route::get('/hobby/fee', [EducationController::class, 'HobbyFee'])->name('hobby.fee');
     Route::get('/daycare/fee', [EducationController::class, 'DaycareFee'])->name('daycare.fee');
-    Route::get('/education/fee', [EducationController::class, 'EducationFee'])->name('education.fee');
+    Route::get('/educationfees', [EducationController::class, 'EducationFee'])->name('education.fee');
     Route::post('/fee/submit', [EducationController::class, 'FeeSubmit'])->name('submit.fee');
 });
+
+Route::group(['prefix' => 'billpay', 'middleware' => ['auth']], function () {
+    Route::get('{type}', [BillpayController::class, 'index'])->name('bill');
+    Route::post('payment', [BillpayController::class, 'payment'])->name('billpay')->middleware('transactionlog:billpay');
+    Route::post('getprovider', [BillpayController::class, 'getprovider'])->name('getprovider');
+    Route::post('providersByName', [BillpayController::class, 'getProvidersByNameSearch'])->name('providersByName');
+});
+
 // Route::group(['prefix' => 'course', 'middleware' => ['auth', 'company']], function () {
 Route::group(['prefix' => 'course'], function () {
     Route::get('list', [CourseController::class, 'courseView'])->name('courseView');

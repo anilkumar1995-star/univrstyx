@@ -8,52 +8,88 @@ $table = 'yes';
 
 
 @section('content')
-<div class="container mb-5 mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-lg-7 col-md-9 col-12">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
-            <h2 class="text-center mb-3">Fee Payment</h2>
-            <p class="text-center text-muted">Pay your tuition or other university fees online quickly and securely.</p>
-
-            <!-- Fee Payment Form -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-center">Fee Details</h5>
-
-                    <form id="feeAdd" enctype="multipart/form-data" action="{{ route('billPayment') }}" method="post">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="user_id" value="{{ Auth::id() }}">
-                        <input type="hidden" name="id">
-                        <input type="hidden" name="categoryname" value="Education Fees">
-
-                        <div class="col-md-12">
-                            <label class="form-label">Select College</label>
-                            <select name="biller_id" id="billerDropdown" required class="form-control">
-                                <option value="">-- Select College --</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Student Mobile</label>
-                            <input type="number" name="customer_mobile" id="customerMobile" required placeholder="Enter Mobile Number" class="form-control">
-                        </div>
-
-                        <!-- Dynamic Fields placeholder -->
-                        <div id="dynamicFields" class="row g-3 mt-3"></div>
-                        <div id="dataFields" class="row g-3 mt-3"></div>
-
-                        <div class="mt-4">
-                            <button class="btn btn-primary w-100" id="fetchBtn" type="button">Fetch Details</button>
-                            <button class="btn btn-success w-100 d-none mt-3" id="payBtn" type="submit">Pay Now</button>
-                        </div>
-                    </form>
-
-                </div>
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0 d-flex align-items-center">
+                    <i class="ti ti-receipt me-2 fs-4"></i>
+                    Education Fee Payment
+                </h5>
             </div>
 
+            <div class="card-body p-4">
+
+                <form id="billpayForm" action="{{ route('billpay') }}" method="post">
+                    {{ csrf_field() }}
+
+                    <input type="hidden" name="type" value="getbilldetails">
+                    <input type="hidden" name="operatorType" value="electricity">
+                    <input type="hidden" name="refId">
+                    <input type="hidden" name="billId">
+                    <input type="hidden" name="mode" value="online">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            College / University
+                        </label>
+                        <select class="form-select form-select-lg" 
+                                name="provider_id" 
+                                onchange="SETTITLE()" 
+                                required 
+                                id="mySelect">
+                            <option value="">Select College</option>
+                           
+                            @foreach ($providers as $provider)
+                                <option value="{{ $provider->id }}">
+                                    {{ $provider->name }} ({{ strtoupper($provider->billerCoverage) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Registered Mobile Number
+                        </label>
+                        <input type="text"
+                               class="form-control form-control-lg"
+                               name="mobileNo"
+                               placeholder="Enter mobile number"
+                               maxlength="10">
+                    </div>
+
+                    <div class="billdata mb-3"></div>
+
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                       <div class="bg-success-subtle px-3 py-2 rounded-3 d-flex justify-content-center align-items-center">
+                            <small class="text-success fw-semibold d-inline-flex align-items-center">
+                                <i class="ti ti-shield-lock me-1"></i> Secure Payment
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit"
+                                    class="btn btn-outline-primary px-4"
+                                    id="fetch">
+                                <i class="ti ti-search me-1"></i> Fetch Bill
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-success px-4 submit-button"
+                                    id="pay">
+                                <i class="ti ti-credit-card me-1"></i> Pay Now
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
 
 @endsection
 @push('style')
@@ -61,11 +97,329 @@ $table = 'yes';
 @endpush
 
 @push('script')
+
 <script type="text/javascript">
+    $(document).ready(function() {
+        $('#mySelect').select2();
+       
+
+        $('#print').click(function() {
+            $('#receipt').find('.modal-body').print();
+        });
+
+        $('#mySelect').select2({
+            ajax: {
+                url: "{{ url('billpay/providersByName') }}",
+                type: 'post',
+                minimumInputLength: 2,
+                data: function(params) {
+                    var query = {
+                        searchname: params.term,
+                        type: `electricity`,
+                        page: params.page || 1,
+                        _token: `{{csrf_token()}}`
+
+                    }
+                    return query;
+                },
+                processResults: function(item, params) {
+                    let billerlist = [];
+
+                    if (item.providers) {
+                        for (let data of item.providers) {
+                            billerlist.push({
+                                "id": data.id,
+                                "text": data.name + '\xa0\xa0\xa0\xa0\xa0' + "-\xa0\xa0Coverage :\xa0\xa0"+ data.billerCoverage.toUpperCase()
+                            })
+
+                        }
+                    }
+                    // console.log(billerlist);
+                    return {
+                        results: billerlist,
+                    };
+                },
+                cache: true
+            }
+        });
+
+        $("#billpayForm").validate({
+            rules: {
+                provider_id: {
+                    required: true,
+                    number: true,
+                },
+                amount: {
+                    required: true,
+                    number: true,
+                    min: 10
+                },
+                biller: {
+                    required: true
+                },
+                duedate: {
+                    required: true,
+                },
+            },
+            messages: {
+                provider_id: {
+                    required: "Please select operator",
+                    number: "Operator id should be numeric",
+                },
+                amount: {
+                    required: "Please enter amount",
+                    number: "Amount should be numeric",
+                },
+                biller: {
+                    required: "Please enter biller name",
+                },
+                duedate: {
+                    required: "Please enter biller duedate",
+                }
+            },
+           errorElement: "p",
+                errorClass: "text-danger mt-1",
+                errorPlacement: function(error, element) {
+                    if (element.prop("tagName").toLowerCase() === "select") {
+                        error.insertAfter(element.next('.select2'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+
+            submitHandler: function() {
+                var form = $('#billpayForm');
+                var id = form.find('[name="id"]').val();
+                var type = form.find('[name="type"]').val();
+
+                form.ajaxSubmit({
+                    dataType: 'json',
+                    beforeSubmit: function() {
+
+                        // if (type == "getbilldetails") {
+                        swal({
+                            title: 'Wait!',
+                            text: 'We are fetching bill details',
+                            onOpen: () => {
+                                swal.showLoading()
+                            },
+                            allowOutsideClick: () => !swal.isLoading()
+                        });
+                        // }
+                    },
+                    complete: function() {
+                        swal.close();
+                    },
+                    success: function(data) {
+                       
+                    swal.close();
+                        if (data.statuscode == "TXN") {
+                            console.log(data);
+                            $('#billpayForm').find('[name="type"]').val("payment");
+                            $('#billpayForm').find('[name="refId"]').val(data.data.refId);
+                            $('#billpayForm').find('[name="mode"]').val(data.data.mode);
+                            $('#billpayForm').find('[name="billId"]').val(data.data.billId);
+                            $('.billdata').append(`
+                                <div class="mb-3">
+                                    <label>Consumer Name</label>
+                                    <input type="text" name="customerName" value="` + data.data.customerName + `" class="form-control" placeholder="Enter name" required="">
+                                </div>
+                                <div class="mb-3">
+                                    <label>Due Date</label>
+                                    <input type="text" name="dueDate" value="` + data.data.dueDate + `" class="form-control" placeholder="Enter due date" required="">
+                                </div>
+                                <div class="mb-3">
+                                    <label>Bill Date</label>
+                                    <input type="text" name="billDate" value="` + data.data.billDate + `" class="form-control" placeholder="Enter due date" required="">
+                                </div>
+                                
+                                    <input type="hidden" name="billNumber" value="` + data.data.billNumber + `" class="form-control" placeholder="Enter due date" required="">
+                                    <input type="hidden" name="billerId" value="` + data.data.billerId + `" class="form-control" placeholder="Enter due date" required="">
+                                
+                                <div class="mb-3">
+                                    <label>Amount</label>
+                                    <input type="text" name="amount" value="` + data.data.amount + `" class="form-control" placeholder="Enter amount" required="">
+                            </div>
+                            <div class="mb-3">
+                                    <label>Email ID</label>
+                                    <input type="text" name="email"  class="form-control" placeholder="Enter Email ID" required="">
+                                </div>
+                            `);
+
+                            $('#fetch').hide();
+                            $('#pay').show();
+
+                        } else if (data.status == "success" || data.status == "pending" || data.status == "failed") {
+                            // console.log('elseif')
+                            form[0].reset();
+                            $('#billpayForm').find('[name="type"]').val("getbilldetails");
+                            form.find('select').select2().val(null).trigger('change');
+                            getbalance();
+                            notify("Billpayment Successfully Submitted", 'success');
+
+                            // swal({
+                            //     title: 'Success',
+                            //     text: "Billpayment Successfully Submitted",
+                            //     type: 'success',
+                            //     onClose: () => {
+                            window.location.href = "{{ url('billpayrecipt') }}/" + data.data.id;
+                            //     }
+                            // });                        
+
+                        } else {
+                            notify(data.message || data.status || "Something went wrong", 'error');
+                        }
+                    },
+                    error: function(errors) {
+                        swal.close();
+                        // showError(errors, form);
+                        notify(errors.responseJSON.status || errors.responseJSON || "Something went wrong", 'error');
+                        $('#fetch').html('Fetch');
+                        $('#pay').html('Pay');
+                    }
+                });
+            }
+        });
+    });
+
+    function SETTITLE() {
+        var providerid = $('[name="provider_id"]').val();
+        // console.log(providerid);
+        if (providerid != '' && providerid != null && providerid != 'null') {
+            $.ajax({
+                    url: "{{ route('getprovider') }}",
+                    type: 'post',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    beforeSend: function() {
+                        swal({
+                            title: 'Wait!',
+                            text: 'We are fetching bill details',
+                            onOpen: () => {
+                                swal.showLoading()
+                            },
+                            allowOutsideClick: () => !swal.isLoading()
+                        });
+                    },
+                    data: {
+                        "provider_id": providerid
+                    }
+                })
+                .done(function(data) {
+                    swal.close();
+                     $('#fetch').show();
+                    $('#billpayForm').find('[name="type"]').val("getbilldetails");
+                    $('.billdata').empty();
+                    // $.each(data.paramname, function(i, val) {
+                    //     var html = '<div>';
+                    //     html += '<div class="form-group mb-2">';
+                    //     html += '<label>' + data.paramname[i] + '</label>';
+                    //     html += '<input type="text" name="number' + i + '" class="form-control" placeholder="Enter ' + data.paramname[i] + '">';
+                    //     html += '</div>';
+                    //     html += '</div>';
+
+
+                    //     // alert(html)
+                    //     $('.billdata').append(html);
+                    // });
+                    moredetails(data)
+                    if (data.fetchOption == "NOT_SUPPORTED") {
+                        $('#billpayForm').find('[name="type"]').val("payment");
+                        $('.billdata').append(`
+                                <div class="form-group mb-2">
+                                    <label>Consumer Name</label>
+                                    <input type="text" name="biller" class="form-control" placeholder="Enter name" required="">
+                                </div>   
+                                <div class="form-group mb-2">
+                                    <label>Amount</label>
+                                    <input type="text" name="amount"  class="form-control" placeholder="Enter amount" required="">
+                            </div>
+                            <div class="form-group mb-2">
+                                    <label>Email ID</label>
+                                    <input type="text" name="email"  class="form-control" placeholder="Enter Email ID" required="">
+                                </div>
+                            `);
+                        $('#fetch').hide();
+                        $('#pay').show();
+                    }
+
+                })
+                .fail(function(errors) {
+                    swal.close();
+                    showError(errors, $('#billpayForm'));
+                });
+        }
+
+        function moredetails(item) {
+
+                let html = '';
+                let i = 0;
+
+                html += `
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Biller Coverage</label>
+                        <input type="text"
+                            name="cov"
+                            class="form-control"
+                            value="${item.billerCoverage.toUpperCase()}"
+                            readonly>
+                    </div>
+                `;
+
+                let params = item.customerReqParam;
+
+            if (typeof params === 'string') {
+                params = JSON.parse(params);
+            }
+
+            params.forEach(p => {
+
+                if (typeof p === 'string') {
+                    p = JSON.parse(p);
+                }
+                if (p.visibility === false) return;
+
+                let inputType = (p.dataType === 'NUMERIC') ? 'number' : 'text';
+                let required  = p.optional === false ? 'required' : '';
+
+                html += `
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            ${p.customParamName}
+                        </label>
+                        <input type="${inputType}"
+                            name="number${i}"
+                            class="form-control"
+                            placeholder="Enter ${p.customParamName}"
+                            minlength="${p.minLength ?? ''}"
+                            maxlength="${p.maxLength ?? ''}"
+                            pattern="${p.regex ?? ''}"
+                            ${required}>
+                    </div>
+                `;
+
+                i++;
+            });
+
+            $('.billdata').html(html);
+        }
+
+    }
+</script>
+
+
+
+
+
+
+
+
+<!-- <script type="text/javascript">
     $(document).ready(function() {
 
         let categoryName = "Education Fees";
-
         if (categoryName !== "") {
             $.ajax({
                 url: "{{ route('addFee') }}",
@@ -305,5 +659,5 @@ $table = 'yes';
         });
 
     });
-</script>
+</script> -->
 @endpush

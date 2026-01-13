@@ -11,6 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="author" content="TemplatesJungle">
     <meta name="keywords" content="Online Store">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <link rel="icon" type="image/png" href="{{ asset('frontend/images/icons/favicon.jpg') }}">
 
@@ -22,11 +23,21 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('') }}frontend/css/summernote.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('') }}frontend/css/owl.carousel.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('') }}frontend/css/intlTelInput.css">
+     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+    <link rel="stylesheet" href="{{ asset('theme_1/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+
+	 <link rel="stylesheet"
+        href="{{ asset('theme_1/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.css" />
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('') }}assets/js/core/sweetalert2.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
@@ -305,13 +316,17 @@
         }
     </style>
 
-    <script src="{{ asset('') }}frontend/js/jquery-1.11.0.min.js"></script>
-    <script src="{{ asset('') }}frontend/js/plugins.js"></script>
-    <script src="{{ asset('') }}frontend/js/script.js"></script>
+     <!-- <script src="{{ asset('') }}frontend/js/script.js"></script> -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+
     <script src="{{ asset('') }}frontend/js/select2.min.js"></script>
     <script src="{{ asset('') }}frontend/js/summernote.js"></script>
     <script src="{{ asset('') }}frontend/js/summernote.min.js"></script>
     <script src="{{ asset('') }}frontend/js/owl.carousel.min.js"></script>
+        <script type="text/javascript" src="{{ asset('') }}assets/js/core/jquery.validate.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('') }}assets/js/plugins/tables/datatables/datatables.min.js"></script>
 
     <script src="{{ asset('') }}frontend/js/intlTelInput-jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -475,10 +490,13 @@
     <script>
         $(document).ready(function() {
 
-            setTimeout(function() {
-                var myModal = new bootstrap.Modal(document.getElementById('updateModal'));
+            setTimeout(function () {
+            const modalEl = document.getElementById('updateModal');
+            if (modalEl) {
+                const myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
                 myModal.show();
-            }, 3000);
+             }
+          }, 3000);
 
 
             var currentStep = 1;
