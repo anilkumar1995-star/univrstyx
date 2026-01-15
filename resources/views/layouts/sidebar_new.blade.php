@@ -296,7 +296,7 @@
                  </ul>
              </li>
              @endif
-             @if (Myhelper::hasRole('admin'))
+             
              <li>
                  <h6 class="submenu-hdr">Settings</h6>
                  <ul>
@@ -309,13 +309,14 @@
                          <ul>
                              <li><a href="{{ route('profile') }}"
                                      class="{{ Request::is('profile/*') ? 'active' : '' }}">Profile</a></li>
+                            @if (Myhelper::hasRole('admin'))
                              <li><a href="{{ route('apilog') }}"
                                      class="{{ Request::is('api/log') ? 'active' : '' }}">API Log</a></li>
+                             @endif
                          </ul>
                      </li>
                  </ul>
              </li>
-             @endif
 
              </ul>
          </div>

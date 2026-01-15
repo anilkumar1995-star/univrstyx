@@ -436,25 +436,15 @@ class UserController extends Controller
             "mobile" => $mobile,
             "var2" => $otp
         ]);
-        if ($userExists) {
-            try {
-                $mail = \Myhelper::mail(
-                    'mail.otp',
-                    ["otp" => $otp, "name" => $user->name, "subhead" => "Reset TPIN"],
-                    $user->email,
-                    $user->name,
-                    $otpmailid->value,
-                    $otpmailname->value,
-                    "Reset TPIN"
-                );
-            } catch (\Exception $e) {
-                $mail = "fail";
-            }
-        } else {
-            $mail = "fail";
+
+        if (!($sms['status'] ?? false)) {
+        return response()->json([
+            'status' => 'ERR',
+            'message' => $sms['message'] ?? 'Server Error Please try after sometime'
+            ], 400);
         }
 
-        if ($mail == "success" || ($sms['status'] ?? false)) {
+        if (($sms['status'] ?? false)) {
             \DB::table('password_resets')->updateOrInsert(
                 ['mobile' => $phone],
                 [
@@ -523,7 +513,7 @@ class UserController extends Controller
     {
         $validate = $request->validate([
             'phone' => 'required|numeric|digits:10',
-            'name' => 'required|string|max:255',
+            'name' => 'required|regex:/^[A-Za-z]+( [A-Za-z]+){0,3}$/',
             'email' => 'required|email|max:255',
             'qualification' => 'required|string|max:255',
             'interest' => 'required|string|max:255',
@@ -543,6 +533,8 @@ class UserController extends Controller
             Auth::login($user);
             $message = 'Logged in successfully';
         } else {
+            $rawPassword = $request->phone;
+            $hashedPassword = bcrypt($rawPassword);
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -553,8 +545,23 @@ class UserController extends Controller
                 'company_id' => 1,
                 'highest_qualification' => $request->qualification,
                 'area_of_interest' => $request->interest,
-                'password' => bcrypt($request->phone),
+                'password' => $hashedPassword,
                 'whatsapp_updates' => ($request->updates === 'true') ? 'yes' : 'no',
+            ]);
+
+              \Mail::send('emails.addmember', [
+                'name' => $request->name,
+                'mobile' => $request->phone,
+                'password' => $rawPassword
+            ], function ($message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Welcome! Your Login Credentials');
+            });
+
+             AndroidCommonHelper::sendEmailAndOtp('activateAccount', [
+                'mobile' => $request->phone,
+                'var2'   => $request->phone,    
+                'var3'   => $rawPassword      
             ]);
 
             Auth::login($user);
