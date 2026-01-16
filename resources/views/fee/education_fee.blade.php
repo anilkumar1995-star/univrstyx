@@ -9,7 +9,7 @@ $table = 'yes';
 
 @section('content')
 <div class="row justify-content-center mt-5 mb-5">
-    <div class="col-lg-7 col-md-9 col-12">
+    <div class="col-lg-8 col-md-10 col-12">
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
             <div class="card-header bg-primary text-white py-3">
@@ -30,61 +30,68 @@ $table = 'yes';
                     <input type="hidden" name="billId">
                     <input type="hidden" name="mode" value="online">
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            College / University
-                        </label>
-                        <select class="form-select form-select-lg" 
-                                name="provider_id" 
-                                onchange="SETTITLE()" 
-                                required 
+                    <!-- Row 1 -->
+                    <div class="row">
+                        <div class="col-md-12 col-12 mb-3">
+                            <label class="form-label fw-semibold">
+                                College / University
+                            </label>
+                            <select class="form-select form-select-lg"
+                                name="provider_id"
+                                onchange="SETTITLE()"
+                                required
                                 id="mySelect">
-                            <option value="">Select College</option>
-                           
-                            @foreach ($providers as $provider)
+                                <option value="">Select College</option>
+                                @foreach ($providers as $provider)
                                 <option value="{{ $provider->id }}">
                                     {{ $provider->name }} ({{ strtoupper($provider->billerCoverage) }})
                                 </option>
-                            @endforeach
-                        </select>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 col-12 mb-3">
+                            <label class="form-label fw-semibold">
+                                Registered Mobile Number
+                            </label>
+                            <input type="text"
+                                class="form-control form-control-lg"
+                                name="mobileNo"
+                                placeholder="Enter mobile number"
+                                maxlength="10">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            Registered Mobile Number
-                        </label>
-                        <input type="text"
-                               class="form-control form-control-lg"
-                               name="mobileNo"
-                               placeholder="Enter mobile number"
-                               maxlength="10">
-                    </div>
-
+                    <!-- Dynamic Bill Fields -->
                     <div class="billdata mb-3"></div>
 
                     <hr class="my-4">
+
+                    <!-- Footer -->
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                       <div class="bg-success-subtle px-3 py-2 rounded-3 d-flex justify-content-center align-items-center">
+                        <div class="bg-success-subtle px-3 py-2 rounded-3 d-flex align-items-center">
                             <small class="text-success fw-semibold d-inline-flex align-items-center">
                                 <i class="ti ti-shield-lock me-1"></i> Secure Payment
                             </small>
                         </div>
+
                         <div class="d-flex gap-2">
                             <button type="submit"
-                                    class="btn btn-outline-primary px-4"
-                                    id="fetch">
+                                class="btn btn-outline-primary px-4"
+                                id="fetch">
                                 <i class="ti ti-search me-1"></i> Fetch Bill
                             </button>
 
                             <button type="submit"
-                                    class="btn btn-success px-4 submit-button"
-                                    id="pay">
+                                class="btn btn-success px-4 submit-button"
+                                id="pay">
                                 <i class="ti ti-credit-card me-1"></i> Pay Now
                             </button>
                         </div>
                     </div>
 
                 </form>
+
             </div>
         </div>
     </div>
@@ -101,7 +108,7 @@ $table = 'yes';
 <script type="text/javascript">
     $(document).ready(function() {
         $('#mySelect').select2();
-       
+
 
         $('#print').click(function() {
             $('#receipt').find('.modal-body').print();
@@ -129,7 +136,7 @@ $table = 'yes';
                         for (let data of item.providers) {
                             billerlist.push({
                                 "id": data.id,
-                                "text": data.name + '\xa0\xa0\xa0\xa0\xa0' + "-\xa0\xa0Coverage :\xa0\xa0"+ data.billerCoverage.toUpperCase()
+                                "text": data.name + '\xa0\xa0\xa0\xa0\xa0' + "-\xa0\xa0Coverage :\xa0\xa0" + data.billerCoverage.toUpperCase()
                             })
 
                         }
@@ -177,15 +184,15 @@ $table = 'yes';
                     required: "Please enter biller duedate",
                 }
             },
-           errorElement: "p",
-                errorClass: "text-danger mt-1",
-                errorPlacement: function(error, element) {
-                    if (element.prop("tagName").toLowerCase() === "select") {
-                        error.insertAfter(element.next('.select2'));
-                    } else {
-                        error.insertAfter(element);
-                    }
-                },
+            errorElement: "p",
+            errorClass: "text-danger mt-1",
+            errorPlacement: function(error, element) {
+                if (element.prop("tagName").toLowerCase() === "select") {
+                    error.insertAfter(element.next('.select2'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
 
             submitHandler: function() {
                 var form = $('#billpayForm');
@@ -211,40 +218,41 @@ $table = 'yes';
                         swal.close();
                     },
                     success: function(data) {
-                       
-                    swal.close();
+
+                        swal.close();
                         if (data.statuscode == "TXN") {
-                            console.log(data);
+                            // console.log(data);
+                            const today = new Date().toISOString().split('T')[0];
                             $('#billpayForm').find('[name="type"]').val("payment");
                             $('#billpayForm').find('[name="refId"]').val(data.data.refId);
                             $('#billpayForm').find('[name="mode"]').val(data.data.mode);
                             $('#billpayForm').find('[name="billId"]').val(data.data.billId);
                             $('.billdata').append(`
-                                <div class="mb-3">
+                              <div class="row mt-3">
+                                <div class="col-md-6 mb-3">
                                     <label>Consumer Name</label>
                                     <input type="text" name="customerName" value="` + data.data.customerName + `" class="form-control" placeholder="Enter name" required="">
                                 </div>
-                                <div class="mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label>Due Date</label>
                                     <input type="text" name="dueDate" value="` + data.data.dueDate + `" class="form-control" placeholder="Enter due date" required="">
                                 </div>
-                                <div class="mb-3">
+                               <div class="col-md-6 mb-3">
                                     <label>Bill Date</label>
-                                    <input type="text" name="billDate" value="` + data.data.billDate + `" class="form-control" placeholder="Enter due date" required="">
+                                    <input type="text"name="billDate" value="${data?.data?.billDate ?? today}"class="form-control" placeholder="Enter Bill Date">
+
                                 </div>
                                 
                                     <input type="hidden" name="billNumber" value="` + data.data.billNumber + `" class="form-control" placeholder="Enter due date" required="">
                                     <input type="hidden" name="billerId" value="` + data.data.billerId + `" class="form-control" placeholder="Enter due date" required="">
                                 
-                                <div class="mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label>Amount</label>
                                     <input type="text" name="amount" value="` + data.data.amount + `" class="form-control" placeholder="Enter amount" required="">
-                            </div>
-                            <div class="mb-3">
-                                    <label>Email ID</label>
-                                    <input type="text" name="email"  class="form-control" placeholder="Enter Email ID" required="">
                                 </div>
-                            `);
+    
+                                  </div>
+                                `);
 
                             $('#fetch').hide();
                             $('#pay').show();
@@ -309,7 +317,7 @@ $table = 'yes';
                 })
                 .done(function(data) {
                     swal.close();
-                     $('#fetch').show();
+                    $('#fetch').show();
                     $('#billpayForm').find('[name="type"]').val("getbilldetails");
                     $('.billdata').empty();
                     // $.each(data.paramname, function(i, val) {
@@ -354,22 +362,10 @@ $table = 'yes';
 
         function moredetails(item) {
 
-                let html = '';
-                let i = 0;
+            let html = '<div class="row">';
+            let i = 0;
 
-                html += `
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Biller Coverage</label>
-                        <input type="text"
-                            name="cov"
-                            class="form-control"
-                            value="${item.billerCoverage.toUpperCase()}"
-                            readonly>
-                    </div>
-                `;
-
-                let params = item.customerReqParam;
-
+            let params = item.customerReqParam;
             if (typeof params === 'string') {
                 params = JSON.parse(params);
             }
@@ -379,32 +375,59 @@ $table = 'yes';
                 if (typeof p === 'string') {
                     p = JSON.parse(p);
                 }
+
                 if (p.visibility === false) return;
 
-                let inputType = (p.dataType === 'NUMERIC') ? 'number' : 'text';
-                let required  = p.optional === false ? 'required' : '';
+                let required = p.optional === false ? 'required' : '';
+                let label = p.customParamName;
 
-                html += `
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            ${p.customParamName}
-                        </label>
-                        <input type="${inputType}"
+                html += `<div class="col-md-6 col-12">`;
+
+                // SELECT field
+                if (Array.isArray(p.values) && p.values.length > 0) {
+
+                    html += `
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">${label}</label>
+                    <select class="form-select form-select-lg"
                             name="number${i}"
-                            class="form-control"
-                            placeholder="Enter ${p.customParamName}"
-                            minlength="${p.minLength ?? ''}"
-                            maxlength="${p.maxLength ?? ''}"
-                            pattern="${p.regex ?? ''}"
                             ${required}>
-                    </div>
-                `;
+                        <option value="">Select ${label}</option>
+                        ${p.values.map(val => `
+                            <option value="${val}">${val}</option>
+                        `).join('')}
+                    </select>
+                </div>
+            `;
 
+                } else {
+
+                    let inputType = (p.dataType === 'NUMERIC') ? 'number' : 'text';
+
+                    html += `
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">${label}</label>
+                    <input type="${inputType}"
+                        name="number${i}"
+                        class="form-control form-control-lg"
+                        placeholder="Enter ${label}"
+                        minlength="${p.minLength ?? ''}"
+                        maxlength="${p.maxLength ?? ''}"
+                        pattern="${p.regex ?? ''}"
+                        ${required}>
+                </div>
+            `;
+                }
+
+                html += `</div>`;
                 i++;
             });
 
+            html += '</div>';
+
             $('.billdata').html(html);
         }
+
 
     }
 </script>

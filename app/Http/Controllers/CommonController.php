@@ -984,6 +984,7 @@ class CommonController extends Controller
 			$request->type != "footersupport" &&
 			$request->type != "group_list" &&
 			$request->type != "goals" &&
+			$request->type != "announcements" &&
 			$request->type != "slider" &&
 			$request->type != "header" &&
 			$request->type != "grievance" &&
