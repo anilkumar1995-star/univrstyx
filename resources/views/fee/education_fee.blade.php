@@ -36,7 +36,7 @@ $table = 'yes';
                             <label class="form-label fw-semibold">
                                 College / University
                             </label>
-                            <select class="form-select form-select-lg"
+                            <select class="form-select form-select"
                                 name="provider_id"
                                 onchange="SETTITLE()"
                                 required
@@ -55,7 +55,7 @@ $table = 'yes';
                                 Registered Mobile Number
                             </label>
                             <input type="text"
-                                class="form-control form-control-lg"
+                                class="form-control form-control"
                                 name="mobileNo"
                                 placeholder="Enter mobile number"
                                 maxlength="10">
@@ -389,7 +389,7 @@ $table = 'yes';
                     html += `
                 <div class="mb-3">
                     <label class="form-label fw-semibold">${label}</label>
-                    <select class="form-select form-select-lg"
+                    <select class="form-select form-select"
                             name="number${i}"
                             ${required}>
                         <option value="">Select ${label}</option>
@@ -409,7 +409,7 @@ $table = 'yes';
                     <label class="form-label fw-semibold">${label}</label>
                     <input type="${inputType}"
                         name="number${i}"
-                        class="form-control form-control-lg"
+                        class="form-control form-control"
                         placeholder="Enter ${label}"
                         minlength="${p.minLength ?? ''}"
                         maxlength="${p.maxLength ?? ''}"

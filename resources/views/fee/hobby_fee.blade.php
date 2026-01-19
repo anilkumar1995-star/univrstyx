@@ -13,7 +13,7 @@ $table = 'yes';
 
             <div class="card shadow-sm bg-light border-0">
                 <div class="card-body p-4 text-center">
-                    <img src="{{ asset('frontend/images/verticals/Law.webp') }}" 
+                    <img src="{{ asset('frontend/images/verticals/hobby.jpeg') }}" 
                          alt="Hobby Class" 
                          class="img-fluid mb-3" 
                          style="max-width: 120px;">

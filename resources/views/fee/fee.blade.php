@@ -16,14 +16,13 @@ $table = 'yes';
                 Pay your fees online quickly and securely.
             </p>
 
-            <!-- Fee Payment Cards -->
             <div class="row g-4 justify-content-center">
 
                 <div class="col-md-3 col-sm-6">
                     <a href="{{ route('school.fee') }}" class="text-decoration-none text-dark">
                         <div class="card text-center shadow-sm border-0 h-100 bg-info bg-opacity-25" style="cursor: pointer;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <img src="{{ asset('frontend/images/verticals/MBA.webp') }}"
+                                <img src="{{ asset('frontend/images/verticals/school.jpeg') }}"
                                     alt="School Fee"
                                     class="img-fluid mb-3"
                                     style="max-width: 100px;">
@@ -38,7 +37,7 @@ $table = 'yes';
                     <a href="{{ route('tution.fee') }}" class="text-decoration-none text-dark">
                         <div class="card text-center shadow-sm bg-warning bg-opacity-25" style="cursor: pointer;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <img src="{{ asset('frontend/images/verticals/Doctorate.webp') }}"
+                                <img src="{{ asset('frontend/images/verticals/tuition.jpg') }}"
                                     alt="Tuition Fee"
                                     class="img-fluid mb-3"
                                     style="max-width: 100px;">
@@ -52,7 +51,7 @@ $table = 'yes';
                     <a href="{{ route('college.fee') }}" class="text-decoration-none text-dark">
                         <div class="card text-center shadow-sm bg-success h-100 bg-opacity-25" style="cursor: pointer;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <img src="{{ asset('frontend/images/verticals/Management.webp') }}"
+                                <img src="{{ asset('frontend/images/verticals/Doctorate.webp') }}"
                                     alt="College Fee"
                                     class="img-fluid mb-3"
                                     style="max-width: 100px;">
@@ -67,7 +66,7 @@ $table = 'yes';
                     <a href="{{ route('hostel.fee') }}" class="text-decoration-none text-dark">
                         <div class="card text-center shadow-sm bg-danger bg-opacity-25" style="cursor: pointer;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <img src="{{ asset('frontend/images/verticals/Law.webp') }}"
+                                <img src="{{ asset('frontend/images/verticals/hostel.jpeg') }}"
                                     alt="Hostel Fee"
                                     class="img-fluid mb-3"
                                     style="max-width: 100px;">
@@ -76,52 +75,51 @@ $table = 'yes';
                         </div>
                     </a>
                 </div>
- <div class="col-md-3 col-sm-6">
-                <a href="{{ route('hobby.fee') }}" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm bg-danger bg-opacity-25" style="cursor: pointer;">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <img src="{{ asset('frontend/images/verticals/Law.webp') }}"
-                                alt="Hostel Fee"
-                                class="img-fluid mb-3"
-                                style="max-width: 100px;">
-                            <span class="fw-semibold text-black">Hobby Class</span>
+                <div class="col-md-3 col-sm-6">
+                    <a href="{{ route('hobby.fee') }}" class="text-decoration-none text-dark">
+                        <div class="card text-center shadow-sm bg-secondary bg-opacity-25" style="cursor: pointer;">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <img src="{{ asset('frontend/images/verticals/hobby.jpeg') }}"
+                                    alt="Hostel Fee"
+                                    class="img-fluid mb-3"
+                                    style="max-width: 100px;">
+                                <span class="fw-semibold text-black">Hobby Class</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-             <div class="col-md-3 col-sm-6">
-                <a href="{{ route('daycare.fee') }}" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm bg-danger bg-opacity-25" style="cursor: pointer;">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <img src="{{ asset('frontend/images/verticals/Law.webp') }}"
-                                alt="Hostel Fee"
-                                class="img-fluid mb-3"
-                                style="max-width: 100px;">
-                            <span class="fw-semibold text-black">Day Care</span>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="{{ route('daycare.fee') }}" class="text-decoration-none text-dark">
+                        <div class="card text-center shadow-sm" style="cursor: pointer;background: rgba(128, 0, 128, 0.2);">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <img src="{{ asset('frontend/images/verticals/daycare.jpeg') }}"
+                                    alt="Hostel Fee"
+                                    class="img-fluid mb-3"
+                                    style="max-width: 100px;">
+                                <span class="fw-semibold text-black">Day Care</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-             <div class="col-md-3 col-sm-6">
-                <a href="{{ route('education.fee') }}" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm bg-danger bg-opacity-25" style="cursor: pointer;">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <img src="{{ asset('frontend/images/verticals/Law.webp') }}"
-                                alt="Hostel Fee"
-                                class="img-fluid mb-3"
-                                style="max-width: 100px;">
-                            <span class="fw-semibold text-black">Education Fee</span>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="{{ route('education.fee') }}" class="text-decoration-none text-dark">
+                        <div class="card text-center shadow-sm" style="cursor: pointer;background: rgba(172, 83, 15, 0.2);">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <img src="{{ asset('frontend/images/verticals/educationfee.png') }}"
+                                    alt="Hostel Fee"
+                                    class="img-fluid mb-3"
+                                    style="max-width: 100px;">
+                                <span class="fw-semibold text-black">Education Fee</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
-            </div>
-           
+
         </div>
 
 
     </div>
-</div>
 </div>
 
 @endsection

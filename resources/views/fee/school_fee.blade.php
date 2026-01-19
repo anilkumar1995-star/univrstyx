@@ -11,9 +11,9 @@ $table = 'yes';
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
 
-            <h2 class="text-center mb-4">Exam Fee Payment</h2>
+            <h2 class="text-center mb-4">School Fee Payment</h2>
             <p class="text-center text-muted mb-4">
-                Fill student details and pay your exam fee securely.
+                Fill student details and pay your school fee securely.
             </p>
 
             <form action="{{ route('submit.fee') }}" id="examForm" method="POST">
@@ -23,7 +23,7 @@ $table = 'yes';
                 @csrf
 
                 <div class="card shadow-sm p-4 mb-4">
-                    <h5 class="mb-3 text-center">Student & Exam Details</h5>
+                    <h5 class="mb-3 text-center">Student & School Details</h5>
                     <div class="row g-3">
 
                         <div class="col-md-6">

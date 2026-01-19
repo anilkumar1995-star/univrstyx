@@ -11,7 +11,7 @@ $table = 'yes';
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
 
-            <h2 class="text-center mb-4">Exam Fee Payment</h2>
+            <h2 class="text-center mb-4">Daycare Fee Payment</h2>
             <p class="text-center text-muted mb-4">
                 Fill student details and pay your exam fee securely.
             </p>
