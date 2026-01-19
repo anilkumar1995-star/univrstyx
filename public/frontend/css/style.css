@@ -48,7 +48,7 @@ body {
 
 @media only screen and (max-width: 991px) {
   body {
-    --bs-body-font-size: 1.2rem;
+    --bs-body-font-size: 1 rem;
   }
 }
 

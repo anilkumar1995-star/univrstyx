@@ -181,6 +181,8 @@ Route::group(['prefix' => 'education', 'middleware' => ['auth', 'company']], fun
 
 Route::group(['prefix' => 'billpay', 'middleware' => ['auth']], function () {
     Route::get('{type}', [BillpayController::class, 'index'])->name('bill');
+     Route::post('/states', [BillpayController::class, 'states']);
+    Route::post('/cities', [BillpayController::class, 'cities']);
     Route::post('payment', [BillpayController::class, 'payment'])->name('billpay')->middleware('transactionlog:billpay');
     Route::post('getprovider', [BillpayController::class, 'getprovider'])->name('getprovider');
     Route::post('providersByName', [BillpayController::class, 'getProvidersByNameSearch'])->name('providersByName');

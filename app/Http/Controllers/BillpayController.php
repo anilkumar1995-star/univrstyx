@@ -53,16 +53,76 @@ class BillpayController extends Controller
         return view('service.billpayment')->with($data);
     }
 
-    function getProvidersByNameSearch(Request $request)
-    {
+    // function getProvidersByNameSearch(Request $request)
+    // {
        
-        $providers = $this->table->where('type', @$request->type)->where('status', '1')->whereNotNull('customParamResp')->orderBy('name');
-        if (isset($request->searchname) && ($request->searchname != null || $request->searchname != "" || !empty($request->searchname))) {
-            $providers = $providers->where('name', 'like', '%' . @$request->searchname . '%');
-        }
-        $data['providers'] = $providers->limit(500)->get();
-        return response()->json($data);
+    //     $providers = $this->table->where('type', @$request->type)->where('status', '1')->whereNotNull('customParamResp')->orderBy('name');
+    //     if (isset($request->searchname) && ($request->searchname != null || $request->searchname != "" || !empty($request->searchname))) {
+    //         $providers = $providers->where('name', 'like', '%' . @$request->searchname . '%');
+    //     }
+    //     $data['providers'] = $providers->limit(500)->get();
+    //     return response()->json($data);
+    // }
+
+      public function getProvidersByNameSearch(Request $request)
+    {
+        if ($request->state && $request->city) {
+            $providers = $this->table
+                ->where('type', $request->type)
+                ->where('status', '1')
+                ->whereNotNull('customParamResp');
+
+
+
+            if ($request->filled('state') && $request->state !== 'all') {
+                $providers->where('state', $request->state);
+            }
+
+            if ($request->filled('city') && $request->city !== 'all') {
+                $providers->where('city', $request->city);
+            }
+
+            if ($request->filled('searchname')) {
+                $providers->where('name', 'like', '%' . $request->searchname . '%');
+            }
+
+            return response()->json([
+                'providers' => $providers
+                    ->orderBy('name')
+                    ->limit(500)
+                    ->get(['id', 'name', 'billerCoverage'])
+            ]);
+        };
     }
+
+
+    public function states()
+    {
+        $states = DB::table('billpay_providers')
+            ->where('type', 'educationfees')
+            ->whereNotNull('state')
+            ->distinct()
+            ->orderBy('state')
+            ->pluck('state');
+
+        return response()->json($states);
+    }
+
+
+    public function cities(Request $request)
+    {
+        $cities = DB::table('billpay_providers')
+            ->where('type', 'educationfees')
+            ->where('status', '1')
+            ->where('state', $request->state)
+            ->whereNotNull('city')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        return response()->json($cities);
+    }
+
 
 
     public function payment(Request $post)

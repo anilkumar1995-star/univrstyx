@@ -19,7 +19,7 @@ $table = 'yes';
                 </h5>
             </div>
 
-            <div class="card-body p-4">
+            <div class="card-body border p-4">
 
                 <form id="billpayForm" action="{{ route('billpay') }}" method="post">
                     {{ csrf_field() }}
@@ -30,17 +30,30 @@ $table = 'yes';
                     <input type="hidden" name="billId">
                     <input type="hidden" name="mode" value="online">
 
-                    <!-- Row 1 -->
                     <div class="row">
-                        <div class="col-md-12 col-12 mb-3">
-                            <label class="form-label fw-semibold">
+                        <div class="col-md-6 mb-2">
+                            <span class="fw-bold">State</span>
+                            <select class="form-select" id="stateSelect">
+                                <option value="">Select State</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <span class="fw-bold">City</span>
+                            <select class="form-select" id="citySelect">
+                                <option value="">Select City</option>
+                                <option value="all">All City</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-12 mb-2">
+                            <span class="fw-bold">
                                 College / University
-                            </label>
-                            <select class="form-select form-select"
-                                name="provider_id"
-                                onchange="SETTITLE()"
-                                required
-                                id="mySelect">
+                            </span>
+                            <select class="form-select form-select" name="provider_id" onchange="SETTITLE()" required id="mySelect">
                                 <option value="">Select College</option>
                                 @foreach ($providers as $provider)
                                 <option value="{{ $provider->id }}">
@@ -50,10 +63,10 @@ $table = 'yes';
                             </select>
                         </div>
 
-                        <div class="col-md-12 col-12 mb-3">
-                            <label class="form-label fw-semibold">
-                                Registered Mobile Number
-                            </label>
+                        <div class="col-md-6 col-12 mb-2">
+                            <span class="fw-bold">
+                                Mobile Number
+                            </span>
                             <input type="text"
                                 class="form-control form-control"
                                 name="mobileNo"
@@ -63,7 +76,7 @@ $table = 'yes';
                     </div>
 
                     <!-- Dynamic Bill Fields -->
-                    <div class="billdata mb-3"></div>
+                    <div class="billdata"></div>
 
                     <hr class="my-4">
 
@@ -109,26 +122,116 @@ $table = 'yes';
     $(document).ready(function() {
         $('#mySelect').select2();
 
+        loadStates();
+
+        function loadStates() {
+            $.ajax({
+                url: "{{ url('billpay/states') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(states) {
+
+                    let html = '<option value="">Select State</option>';
+                    html += '<option value="all">All India</option>';
+
+                    states.forEach(function(state) {
+                        html += `<option value="${state}">${state}</option>`;
+                    });
+
+                    $('#stateSelect').html(html);
+                }
+            });
+        }
+
+
+
+        $('#stateSelect').on('change', function() {
+
+            $('.billdata').empty();
+            $('#fetch').show();
+            $('#pay').hide();
+
+            let state = $(this).val();
+
+            let cityHtml = '<option value="">Select City</option>';
+            cityHtml += '<option value="all">All City</option>';
+
+            $('#citySelect').html(cityHtml).prop('disabled', false);
+            $('#mySelect').val(null).trigger('change').prop('disabled', true);
+
+            if (!state) return;
+
+            if (state === 'all') {
+                $('#mySelect').prop('disabled', false);
+                return;
+            }
+
+            // Load cities
+            $.ajax({
+                url: "{{ url('billpay/cities') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    state: state
+                },
+                success: function(cities) {
+                    cities.forEach(function(city) {
+                        $('#citySelect').append(
+                            `<option value="${city}">${city}</option>`
+                        );
+                    });
+                }
+            });
+        });
+
+
+        $('#citySelect').on('change', function() {
+
+            $('.billdata').empty();
+
+            $('#fetch').show();
+            $('#pay').hide();
+
+            let state = $('#stateSelect').val();
+            let city = $(this).val();
+
+            $('#mySelect').val(null).trigger('change');
+
+            if (state && city) {
+                $('#mySelect').prop('disabled', false);
+            } else {
+                $('#mySelect').prop('disabled', true);
+            }
+        });
+
+        $('#fetch, #pay').on('click', function() {
+            $("#billpayForm").valid();
+        });
+
 
         $('#print').click(function() {
             $('#receipt').find('.modal-body').print();
         });
 
         $('#mySelect').select2({
+            width: '100%',
             ajax: {
                 url: "{{ url('billpay/providersByName') }}",
                 type: 'post',
                 minimumInputLength: 2,
                 data: function(params) {
-                    var query = {
+                    return {
                         searchname: params.term,
-                        type: `educationfees`,
+                        type: 'educationfees',
+                        state: $('#stateSelect').val(),
+                        city: $('#citySelect').val(),
                         page: params.page || 1,
-                        _token: `{{csrf_token()}}`
-
-                    }
-                    return query;
+                        _token: '{{ csrf_token() }}'
+                    };
                 },
+
                 processResults: function(item, params) {
                     let billerlist = [];
 
@@ -154,7 +257,6 @@ $table = 'yes';
             rules: {
                 provider_id: {
                     required: true,
-                    number: true,
                 },
                 amount: {
                     required: true,
@@ -171,7 +273,6 @@ $table = 'yes';
             messages: {
                 provider_id: {
                     required: "Please select operator",
-                    number: "Operator id should be numeric",
                 },
                 amount: {
                     required: "Please enter amount",
@@ -192,6 +293,12 @@ $table = 'yes';
                 } else {
                     error.insertAfter(element);
                 }
+                setTimeout(function() {
+                    error.fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }, 5000);
+
             },
 
             submitHandler: function() {
@@ -221,38 +328,39 @@ $table = 'yes';
 
                         swal.close();
                         if (data.statuscode == "TXN") {
-                            // console.log(data);
+                            console.log(data);
                             const today = new Date().toISOString().split('T')[0];
                             $('#billpayForm').find('[name="type"]').val("payment");
                             $('#billpayForm').find('[name="refId"]').val(data.data.refId);
                             $('#billpayForm').find('[name="mode"]').val(data.data.mode);
                             $('#billpayForm').find('[name="billId"]').val(data.data.billId);
                             $('.billdata').append(`
-                              <div class="row mt-3">
-                                <div class="col-md-6 mb-3">
+                              <div class="row">
+                                <div class="col-md-6 mb-2">
                                     <label>Consumer Name</label>
-                                    <input type="text" name="customerName" value="` + data.data.customerName + `" class="form-control" placeholder="Enter name" required="">
+                                    <input type="text" name="customerName" value="` + data.data.customerName + `" class="form-control" placeholder="Enter name" readonly required="">
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-2">
                                     <label>Due Date</label>
-                                    <input type="text" name="dueDate" value="` + data.data.dueDate + `" class="form-control" placeholder="Enter due date" required="">
+                                    <input type="text" name="dueDate" value="` + data.data.dueDate + `" class="form-control" readonly placeholder="Enter due date" required="">
                                 </div>
-                               <div class="col-md-6 mb-3">
+                               <div class="col-md-6 mb-2">
                                     <label>Bill Date</label>
-                                    <input type="text"name="billDate" value="${data?.data?.billDate ?? today}"class="form-control" placeholder="Enter Bill Date">
+                                    <input type="text"name="billDate" value="${data?.data?.billDate ?? today}"class="form-control"  placeholder="Enter Bill Date">
 
                                 </div>
                                 
                                     <input type="hidden" name="billNumber" value="` + data.data.billNumber + `" class="form-control" placeholder="Enter due date" required="">
                                     <input type="hidden" name="billerId" value="` + data.data.billerId + `" class="form-control" placeholder="Enter due date" required="">
                                 
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-2">
                                     <label>Amount</label>
                                     <input type="text" name="amount" value="` + data.data.amount + `" class="form-control" placeholder="Enter amount" required="">
                                 </div>
     
                                   </div>
                                 `);
+                            lockMoreDetailsOnly();
 
                             $('#fetch').hide();
                             $('#pay').show();
@@ -289,6 +397,16 @@ $table = 'yes';
             }
         });
     });
+
+    function lockMoreDetailsOnly() {
+
+        $('.moredetails-wrapper')
+            .find('input:not([type="hidden"])')
+            .prop('readonly', true);
+        $('.moredetails-wrapper')
+            .find('select')
+            .prop('disabled', true);
+    }
 
     function SETTITLE() {
         var providerid = $('[name="provider_id"]').val();
@@ -360,9 +478,12 @@ $table = 'yes';
                 });
         }
 
+
+
+
         function moredetails(item) {
 
-            let html = '<div class="row">';
+            let html = '<div class="row moredetails-wrapper">';
             let i = 0;
 
             let params = item.customerReqParam;
@@ -383,12 +504,11 @@ $table = 'yes';
 
                 html += `<div class="col-md-6 col-12">`;
 
-                // SELECT field
                 if (Array.isArray(p.values) && p.values.length > 0) {
 
                     html += `
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">${label}</label>
+                <div class="mb-2">
+                    <span class="fw-bold">${label}</span>
                     <select class="form-select form-select"
                             name="number${i}"
                             ${required}>
@@ -405,11 +525,11 @@ $table = 'yes';
                     let inputType = (p.dataType === 'NUMERIC') ? 'number' : 'text';
 
                     html += `
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">${label}</label>
+                <div class="mb-2">
+                    <span class="fw-bold">${label}</span>
                     <input type="${inputType}"
                         name="number${i}"
-                        class="form-control form-control"
+                        class="form-control"
                         placeholder="Enter ${label}"
                         minlength="${p.minLength ?? ''}"
                         maxlength="${p.maxLength ?? ''}"
