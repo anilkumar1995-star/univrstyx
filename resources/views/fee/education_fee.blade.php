@@ -8,103 +8,105 @@ $table = 'yes';
 
 
 @section('content')
-<div class="row justify-content-center mt-5 mb-5">
-    <div class="col-lg-8 col-md-10 col-12">
-        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+<div class="container">
+    <div class="row justify-content-center border-0 rounded-4 my-5">
+        <div class="col-lg-8 col-md-10 col-12">
+            <div class="card shadow-sm">
 
-            <div class="card-header bg-primary text-white py-3">
-                <h5 class="mb-0 d-flex align-items-center">
-                    <i class="ti ti-receipt me-2 fs-4"></i>
-                    Education Fee Payment
-                </h5>
-            </div>
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="ti ti-receipt me-2 fs-4"></i>
+                        Education Fee Payment
+                    </h5>
+                </div>
 
-            <div class="card-body border p-4">
+                <div class="card-body border p-4">
 
-                <form id="billpayForm" action="{{ route('billpay') }}" method="post">
-                    {{ csrf_field() }}
+                    <form id="billpayForm" action="{{ route('billpay') }}" method="post">
+                        {{ csrf_field() }}
 
-                    <input type="hidden" name="type" value="getbilldetails">
-                    <input type="hidden" name="operatorType" value="educationfees">
-                    <input type="hidden" name="refId">
-                    <input type="hidden" name="billId">
-                    <input type="hidden" name="mode" value="online">
+                        <input type="hidden" name="type" value="getbilldetails">
+                        <input type="hidden" name="operatorType" value="educationfees">
+                        <input type="hidden" name="refId">
+                        <input type="hidden" name="billId">
+                        <input type="hidden" name="mode" value="online">
 
-                    <div class="row">
-                        <div class="col-md-6 mb-2">
-                            <span class="fw-bold">State</span>
-                            <select class="form-select" id="stateSelect">
-                                <option value="">Select State</option>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <span class="fw-semibold">State</span>
+                                <select class="form-select" id="stateSelect">
+                                    <option value="">Select State</option>
 
-                            </select>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-2">
+                                <span class="fw-semibold">City</span>
+                                <select class="form-select" id="citySelect">
+                                    <option value="">Select City</option>
+                                    <option value="all">All City</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="col-md-6 mb-2">
-                            <span class="fw-bold">City</span>
-                            <select class="form-select" id="citySelect">
-                                <option value="">Select City</option>
-                                <option value="all">All City</option>
-                            </select>
-                        </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-6 col-12 mb-2">
+                                <span class="fw-semibold">
+                                    College / University
+                                </span>
+                                <select class="form-select form-select" name="provider_id" onchange="SETTITLE()" required id="mySelect">
+                                    <option value="">Select College</option>
+                                    @foreach ($providers as $provider)
+                                    <option value="{{ $provider->id }}">
+                                        {{ $provider->name }} ({{ strtoupper($provider->billerCoverage) }})
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                    <div class="row">
-                        <div class="col-md-6 col-12 mb-2">
-                            <span class="fw-bold">
-                                College / University
-                            </span>
-                            <select class="form-select form-select" name="provider_id" onchange="SETTITLE()" required id="mySelect">
-                                <option value="">Select College</option>
-                                @foreach ($providers as $provider)
-                                <option value="{{ $provider->id }}">
-                                    {{ $provider->name }} ({{ strtoupper($provider->billerCoverage) }})
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 col-12 mb-2">
-                            <span class="fw-bold">
-                                Mobile Number
-                            </span>
-                            <input type="text"
-                                class="form-control form-control"
-                                name="mobileNo"
-                                placeholder="Enter mobile number"
-                                maxlength="10">
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Bill Fields -->
-                    <div class="billdata"></div>
-
-                    <hr class="my-4">
-
-                    <!-- Footer -->
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div class="bg-success-subtle px-3 py-2 rounded-3 d-flex align-items-center">
-                            <small class="text-success fw-semibold d-inline-flex align-items-center">
-                                <i class="ti ti-shield-lock me-1"></i> Secure Payment
-                            </small>
+                            <div class="col-md-6 col-12 mb-2">
+                                <span class="fw-semibold">
+                                    Mobile Number
+                                </span>
+                                <input type="text"
+                                    class="form-control form-control"
+                                    name="mobileNo"
+                                    placeholder="Enter mobile number"
+                                    maxlength="10">
+                            </div>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit"
-                                class="btn btn-outline-primary px-4"
-                                id="fetch">
-                                <i class="ti ti-search me-1"></i> Fetch Bill
-                            </button>
+                        <!-- Dynamic Bill Fields -->
+                        <div class="billdata"></div>
 
-                            <button type="submit"
-                                class="btn btn-success px-4 submit-button"
-                                id="pay">
-                                <i class="ti ti-credit-card me-1"></i> Pay Now
-                            </button>
+                        <hr class="my-4">
+
+                        <!-- Footer -->
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="bg-success-subtle px-3 py-2 rounded-3 d-flex align-items-center">
+                                <small class="text-success fw-semibold d-inline-flex align-items-center">
+                                    <i class="ti ti-shield-lock me-1"></i> Secure Payment
+                                </small>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit"
+                                    class="btn btn-outline-primary px-4"
+                                    id="fetch">
+                                    <i class="ti ti-search me-1"></i> Fetch Bill
+                                </button>
+
+                                <button type="submit"
+                                    class="btn btn-success px-4 submit-button"
+                                    id="pay">
+                                    <i class="ti ti-credit-card me-1"></i> Pay Now
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                </form>
+                    </form>
 
+                </div>
             </div>
         </div>
     </div>
@@ -328,7 +330,7 @@ $table = 'yes';
 
                         swal.close();
                         if (data.statuscode == "TXN") {
-                            console.log(data);
+                            // console.log(data);
                             const today = new Date().toISOString().split('T')[0];
                             $('#billpayForm').find('[name="type"]').val("payment");
                             $('#billpayForm').find('[name="refId"]').val(data.data.refId);
@@ -337,15 +339,15 @@ $table = 'yes';
                             $('.billdata').append(`
                               <div class="row">
                                 <div class="col-md-6 mb-2">
-                                    <label>Consumer Name</label>
+                                    <label class="fw-semibold">Consumer Name</label>
                                     <input type="text" name="customerName" value="` + data.data.customerName + `" class="form-control" placeholder="Enter name" readonly required="">
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label>Due Date</label>
+                                    <label class="fw-semibold">Due Date</label>
                                     <input type="text" name="dueDate" value="` + data.data.dueDate + `" class="form-control" readonly placeholder="Enter due date" required="">
                                 </div>
                                <div class="col-md-6 mb-2">
-                                    <label>Bill Date</label>
+                                    <label class="fw-semibold">Bill Date</label>
                                     <input type="text"name="billDate" value="${data?.data?.billDate ?? today}"class="form-control"  placeholder="Enter Bill Date">
 
                                 </div>
@@ -354,7 +356,7 @@ $table = 'yes';
                                     <input type="hidden" name="billerId" value="` + data.data.billerId + `" class="form-control" placeholder="Enter due date" required="">
                                 
                                 <div class="col-md-6 mb-2">
-                                    <label>Amount</label>
+                                    <label class="fw-semibold">Amount</label>
                                     <input type="text" name="amount" value="` + data.data.amount + `" class="form-control" placeholder="Enter amount" required="">
                                 </div>
     
@@ -508,7 +510,7 @@ $table = 'yes';
 
                     html += `
                 <div class="mb-2">
-                    <span class="fw-bold">${label}</span>
+                    <span class="fw-semibold">${label}</span>
                     <select class="form-select form-select"
                             name="number${i}"
                             ${required}>
@@ -526,7 +528,7 @@ $table = 'yes';
 
                     html += `
                 <div class="mb-2">
-                    <span class="fw-bold">${label}</span>
+                    <span class="fw-semibold">${label}</span>
                     <input type="${inputType}"
                         name="number${i}"
                         class="form-control"

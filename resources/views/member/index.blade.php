@@ -417,6 +417,14 @@
                             @if (Myhelper::can(['fund_transfer', 'fund_return']))
                                 menu += `<li class="dropdown-header">Action</li>`;
                             @endif
+                              @if(auth()->check() && \Myhelper::hasRole('admin'))
+                                    menu += `
+                                        <a href="javascript:void(0)" class="dropdown-item"
+                                        onclick="deleteMember('${full?.id}')">
+                                            Delete Member
+                                        </a>
+                                    `;
+                                @endif
                             @if (Myhelper::can('member_permission_change'))
                                 menu +=
                                     `<a href="javascript:void(0)" class="dropdown-item" onclick="getPermission(${full.id})"><i class="icon-cogs"></i> Permission</a>`;
@@ -589,6 +597,53 @@
             });
            
         });
+
+         function deleteMember(id) {
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you really want to delete this member?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, Delete it !",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                        Swal.fire({
+                        title: "Please wait...",
+                        text: "Deleting member...",
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: "/member/delete/" + id,
+                        type: "DELETE",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(res) {
+
+                            if (res.status === "success") {
+                                Swal.fire("Deleted!", res.message, "success");
+
+                                // Reload datatable
+                                $('#datatable').DataTable().ajax.reload();
+                            } else {
+                                Swal.fire("Error!", res.message, "error");
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire("Error!", xhr?.responseJSON?.message || "Something went wrong", "error");
+                        }
+                    });
+                }
+            });
+        }
 
 
         function getPermission(id) {

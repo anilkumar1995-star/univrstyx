@@ -233,7 +233,7 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth', 'company']], functi
 
     Route::get('salary/details', [MemberController::class, 'salaryView'])->name('salaryView');
     Route::post('salary', [MemberController::class, 'salaryCreate'])->name('salaryDetStore');
-
+    Route::delete('delete/{id}', [MemberController::class, 'deleteMember'])->name('member.delete');
     Route::get('{type}/{action?}', [MemberController::class, 'index'])->name('member');
     Route::post('store', [MemberController::class, 'create'])->middleware('webActivityLog')->name('memberstore');
     Route::post('commission/update', [MemberController::class, 'commissionUpdate'])->middleware('webActivityLog')->name('commissionUpdate'); //->middleware('activity');

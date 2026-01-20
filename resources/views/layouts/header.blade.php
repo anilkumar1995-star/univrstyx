@@ -87,11 +87,12 @@
                          <a class="dropdown-item" href="{{ route('profile') }}">
                              <i class="ti ti-user"></i> My Profile
                          </a>
-                         @if (Myhelper::hasNotRole('admin') && Myhelper::can('view_commission'))
+                         
+                       {{--  @if (Myhelper::hasNotRole('admin') && Myhelper::can('view_commission'))
                              <a class="dropdown-item" href="{{ route('resource', ['type' => 'commission']) }}">
                                  <i class="ti ti-eye"></i> View Commission
                              </a>
-                         @endif
+                         @endif --}}
                             @if (Auth::check() && Myhelper::hasRole('student'))
                           <a class="dropdown-item" href="#">
                             <i class="ti ti-wallet"></i> Wallet 
@@ -120,11 +121,11 @@
              <a class="dropdown-item" href="{{ route('profile') }}">
                  <i class="ti ti-user"></i> My Profile
              </a>
-             @if (Myhelper::hasNotRole('admin') && Myhelper::can('view_commission'))
+          {{--   @if (Myhelper::hasNotRole('admin') && Myhelper::can('view_commission'))
                  <a class="dropdown-item" href="{{ route('resource', ['type' => 'commission']) }}">
                      <i class="ti ti-eye"></i> View Commission
                  </a>
-             @endif
+             @endif --}}
                @if (Auth::check() && Myhelper::hasRole('student'))
                           <a class="dropdown-item" href="#">
                             <i class="ti ti-wallet"></i> Wallet 

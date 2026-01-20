@@ -223,6 +223,35 @@ class MemberController extends Controller
         }
     }
 
+     
+   public function deleteMember($id)
+{
+  
+    if (!\Myhelper::hasRole('admin')) {
+        return response()->json([
+            'status'  => 'failed',
+            'message' => 'Unauthorized access'
+        ], 403);
+    }
+
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'status'  => 'failed',
+            'message' => 'Member not found'
+        ], 404);
+    }
+
+    $user->delete();
+
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Member deleted successfully'
+    ], 200);
+}
+
+
     public function getCommission(Request $post)
     {
         // $product = DB::table('gbl_service_list')->where('is_commission', "1")->get();
